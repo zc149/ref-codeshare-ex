@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Real Time Messaging</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<div id="messageArea"></div>
+<input type="text" id="messageInput">
+<button onclick="sendMessage()">Send</button>
+
+<script th:inline="javascript">
+    const socket = new SockJS('/websocket');
+    const stompClient = Stomp.over(socket);
+    const timeout = null;
+
+    stompClient.connect({}, function (frame) {
+        stompClient.subscribe('/topic/public', function (messageOutput) {
+            document.getElementById('messageInput').value = messageOutput.body;
+        });
+    });
+
+    function sendMessage() {
+        var messageInput = document.getElementById('messageInput');
+        stompClient.send("/app/send", {}, messageInput.value);
+    }
+
+    function debounce(func, wait) {
+        return function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(func, wait);
+        }
+    }
+
+    const debouncedSend = debounce(sendMessage, 2000);
+    document.getElementById('messageInput').addEventListener('keydown', debouncedSend);
+</script>
+</body>
+</html>
