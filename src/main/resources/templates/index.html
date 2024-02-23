@@ -7,33 +7,34 @@
 </head>
 <body>
 <div id="messageArea"></div>
-<input type="text" id="messageInput">
-<button onclick="sendMessage()">Send</button>
+<textarea cols="50" rows="10" id="messageInput"></textarea>
+
+<!--<input type="text" id="messageInput">-->
 
 <script th:inline="javascript">
     const socket = new SockJS('/websocket');
     const stompClient = Stomp.over(socket);
     const timeout = null;
 
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/public', function (messageOutput) {
+    stompClient.connect({}, (frame) => {
+        stompClient.subscribe('/topic/public', (messageOutput) => {
             document.getElementById('messageInput').value = messageOutput.body;
         });
     });
 
-    function sendMessage() {
-        var messageInput = document.getElementById('messageInput');
+    sendMessage = () => {
+        const messageInput = document.getElementById('messageInput');
         stompClient.send("/app/send", {}, messageInput.value);
     }
 
-    function debounce(func, wait) {
-        return function() {
+    debounce = (func, wait) => {
+        return () => {
             clearTimeout(timeout);
             timeout = setTimeout(func, wait);
         }
     }
 
-    const debouncedSend = debounce(sendMessage, 2000);
+    const debouncedSend = debounce(sendMessage, 100);
     document.getElementById('messageInput').addEventListener('keydown', debouncedSend);
 </script>
 </body>
