@@ -1,4 +1,4 @@
-package com.codeshare;
+package com.codeshare.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

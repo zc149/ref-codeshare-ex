@@ -25,6 +25,8 @@
         stompClient.send("/app/send", {}, messageInput.value);
     };
 
+
+
     debounce = (func, wait) => {
         return () => {
             clearTimeout(timeout);
