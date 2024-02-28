@@ -50,8 +50,14 @@ const RealTimeMessaging = () => {
   };
 
   return (
-    <textarea cols="50" rows="10" value={inputMessage} onChange={handleInputChange} />
-  );
+    <textarea
+      className='resize-none shadow-md p-3 mt-1 w-2/3 h-screen 
+      border-4 border-blue-600 rounded-md focus:outline-none
+       focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+      value={inputMessage}
+      onChange={handleInputChange}
+    />
+  )
 };
 
 export default RealTimeMessaging;
