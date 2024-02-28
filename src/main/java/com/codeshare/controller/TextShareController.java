@@ -19,10 +19,9 @@ public class TextShareController {
     @MessageMapping("/send")
     @SendTo("/topic/public")
     public String shareContent(String content) {
-        System.out.println("ss");
         store.setMessage(content);
 
-        return content;
+        return store.getMessage();
     }
 
 }

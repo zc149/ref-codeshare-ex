@@ -17,7 +17,7 @@ public class IndexController {
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping
     public String getIndexPage() {
-        System.out.println("aa");
+
         return store.getMessage();
     }
 }
