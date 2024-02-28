@@ -1,27 +1,26 @@
-package com.codeshare.controller;
+package com.codeshare.controller.textcontroller;
 
 
-import com.codeshare.model.MessageStore;
+import com.codeshare.model.TextStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173")
 public class TextShareController {
 
-    private final MessageStore store;
+    private final TextStore store;
 
     @MessageMapping("/send")
     @SendTo("/topic/public")
     public String shareContent(String content) {
-        store.setMessage(content);
+        store.setText(content);
 
-        return store.getMessage();
+        return store.getText();
     }
 
 }
