@@ -1,54 +1,80 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import axios from 'axios';
-
 
 const RealTimeMessaging = () => {
   const [message, setMessage] = useState('');
-  const [client, setClient] = useState(null);
+  const [client, setClient] = useState();
+  const timeout = useRef(null);
 
   useEffect(() => {
-    axios.get('http://localhost:8080')
-      .then(response => setMessage(response.data))
-      .catch(error => console.error(error));
-
-    const socketClient = new Client({
-      brokerURL: 'ws://localhost:8080/websocket',
+    const client = new Client({
+      brokerURL: "ws://localhost:8080/websocket", // 서버 WebSocket URL
+      reconnectDelay: 5000,
       onConnect: () => {
-        socketClient.subscribe('/topic/public', messageOutput => {
-          if (!messageOutput) messageOutput = '';
-          setMessage(messageOutput.body);
+        console.log("conn");
+        client.subscribe(`/topic/public`, (message) => {
+          const msg = JSON.parse(message.body);
+          setMessage((prevMessages) => [...prevMessages, msg]);
         });
       },
     });
+    client.activate();
 
-    socketClient.activate();
-    setClient(socketClient);
+    setClient(client)
 
-    return () => {
-      socketClient.deactivate();
-    };
+
+    // axios.get('http://localhost:8080')
+    //   .then(response => setMessage(response.data))
+    //   .catch(error => console.error(error));
+
+    // const socket = new SockJS('http://localhost:8080/websocket');
+    // const stompClient = new Client({
+    //   webSocketFactory: () => socket,
+    //   onConnect: () => {
+
+    //     stompClient.subscribe('/topic/public', (messageOutput) => {
+    //       if (!messageOutput) messageOutput = '';
+    //       setMessage(messageOutput.body);
+    //     });
+    //     client.current = stompClient;
+    //     console.log(client)
+    //   },
+    // });
+
+    // stompClient.activate();
+
+    // return () => {
+    //   if (stompClient.connected) {
+    //     stompClient.deactivate();
+    //   }
+    // };
   }, []);
 
-  const debounce = (func, wait) => {
-    let timeout;
-    return () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(func, wait);
-    };
-  };
+  // const sendMessage = () => {
+  //   console.log(client)
+  //   // console.log(client.current.connected)
+  //   if (client.current && client.current.connected) {
+  //     const payload = JSON.stringify({ body: message });
+  //     client.current.publish({ destination: "/app/send", body: payload });
+  //   }
+  // };
 
-  const sendMessage = () => {
-    if (client) {
-      client.publish({ destination: "/app/send", body: message });
-    }
-  };
+  // const debounce = (func, wait) => {
+  //   return () => {
+  //     clearTimeout(timeout.current);
+  //     timeout.current = setTimeout(func, wait);
+  //   };
+  // };
 
-  const debouncedSend = debounce(sendMessage, 100);
+  // const debouncedSend = debounce(sendMessage, 100);
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
-    debouncedSend();
+    // debouncedSend();
+    client.publish({ destination: "/app/send", body: JSON.stringify(e.target.value) });
+
   };
 
   return (
