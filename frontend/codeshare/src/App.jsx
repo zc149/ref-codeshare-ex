@@ -1,16 +1,12 @@
 import React from 'react';
-import Messaging from './Messaging'; 
 import TextSharing from './TextSharing';
+import Messaging from './Messaging';
 
 const App = () => {
     return (
-        <div className="app-container" style={{ display: 'flex' }}>
-            <div style={{ flex: 3 }}>
-                <TextSharing />
-            </div>
-            <div style={{ flex: 1 }}>
-                <Messaging />
-            </div>
+        <div className='flex'>
+            <TextSharing className='w-4/5' />
+            <Messaging className='w-1/5' />
         </div>
     );
 }

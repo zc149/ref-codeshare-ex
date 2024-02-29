@@ -51,7 +51,7 @@ const TextSharing = () => {
 
   return (
     <textarea
-      className='resize-none shadow-md p-3 mt-1 w-2/3 h-screen 
+      className='resize-none shadow-md p-3 mt-1 w-4/5 h-screen 
       border-4 border-blue-600 rounded-md focus:outline-none
        focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
       value={inputMessage}
